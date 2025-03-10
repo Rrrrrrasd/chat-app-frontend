@@ -1,12 +1,20 @@
 import logo from './logo.svg';
+import React from 'react';
 import './App.css';
-import AuthForm from './components/AuthForm';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+import Signup from './components/Signup';
+import Login from './components/Login';
 
 function App() {
   return (
-    <div className="App">
-      <AuthForm />
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Login />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
