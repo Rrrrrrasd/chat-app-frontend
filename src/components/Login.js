@@ -1,70 +1,55 @@
-
+// src/components/Login.js
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { loginUser } from '../features/auth/authSlice';
-import { Link } from 'react-router-dom';
-import './Login.css';
+import axios from 'axios';
+import { setAccessToken } from '../api/axiosInstance';
 
 const Login = () => {
-  const dispatch = useDispatch();
-  const [credentials, setCredentials] = useState({ username: '', password: '' });
-  const { loading, error, accessToken } = useSelector((state) => state.auth);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
-  const handleChange = (e) => {
-    setCredentials({ ...credentials, [e.target.name]: e.target.value });
-  };
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    const result = await dispatch(loginUser(credentials));
-    if (result.meta.requestStatus === 'fulfilled') {
+  const handleLogin = async () => {
+    try {
+      // 로그인 요청: 로그인 API가 쿠키에 토큰을 저장해 줍니다.
+      await axios.post(
+        'http://localhost:8080/api/auth/login',
+        { username, password },
+        { withCredentials: true }
+      );
+      // 로그인 성공 후, refresh API를 호출해 access token을 받아옵니다.
+      const refreshResponse = await axios.post(
+        'http://localhost:8080/api/auth/refresh',
+        {},
+        { withCredentials: true }
+      );
+      // 받아온 access token을 메모리에 저장합니다.
+      setAccessToken(refreshResponse.data.accessToken);
       alert('로그인 성공!');
+    } catch (error) {
+      console.error(error);
+      alert('로그인 실패!');
     }
   };
 
   return (
-    <div className="login-container">
-      <h2>Login</h2>
-      {accessToken ? (
-        <p>Logged in! Your token is: {accessToken}</p>
-      ) : (
-        <form onSubmit={handleLogin} className="login-form">
-          <div className="input-group">
-            <label htmlFor="username">Username</label>
-            <input 
-              type="text"
-              id="username"
-              name="username"
-              placeholder="아이디 입력"
-              value={credentials.username}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="input-group">
-            <label htmlFor="password">Password</label>
-            <input 
-              type="password"
-              id="password"
-              name="password"
-              placeholder="비밀번호 입력"
-              value={credentials.password}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <button type="submit" className="login-button" disabled={loading}>
-            {loading ? 'Logging in...' : 'Log In'}
-          </button>
-          {error && <p className="error">Error: {error}</p>}
-          <div className="signup-link">
-            <span>Don't have an account?</span>
-            <Link to="/signup">
-              <button type="button" className="signup-button">Sign Up</button>
-            </Link>
-          </div>
-        </form>
-      )}
+    <div>
+      <h2>로그인</h2>
+      <div>
+        <input
+          type="text"
+          placeholder="아이디"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+      </div>
+      <div>
+        <input
+          type="password"
+          placeholder="비밀번호"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+      </div>
+      <button onClick={handleLogin}>로그인</button>
     </div>
   );
 };

@@ -1,84 +1,64 @@
-
+// src/components/Signup.js
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { signupUser } from '../features/auth/authSlice';
-import { Link, useNavigate } from 'react-router-dom';
-import  './Signup.css';
+import axios from 'axios';
 
 const Signup = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const [form, setForm] = useState({
-    username: '',
-    password: '',
-    nickname: '',
-  });
-  const { loading, error } = useSelector((state) => state.auth);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [nickname, setNickname] = useState('');
+  const [message, setMessage] = useState('');
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSignup = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = await dispatch(signupUser(form));
-    if (result.meta.requestStatus === 'fulfilled') {
-      alert('회원가입 성공!');
-      navigate('/login');
+    try {
+      // 회원가입 API 호출
+      const response = await axios.post(
+        'http://localhost:8080/api/auth/signup',
+        { username, password, nickname },
+        { withCredentials: true } // 필요 시 쿠키 전송 옵션 추가
+      );
+      // 백엔드에서 "회원가입이 성공적으로 완료되었습니다." 메시지를 반환
+      setMessage(response.data);
+    } catch (error) {
+      console.error(error);
+      setMessage('회원가입에 실패했습니다.');
     }
   };
 
   return (
-    <div className="signup-container">
-      <h2>Sign Up</h2>
-      <form onSubmit={handleSignup} className="signup-form">
-        <div className="input-group">
-          <label htmlFor="username">Username</label>
-          <input 
+    <div>
+      <h2>회원가입</h2>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>아이디: </label>
+          <input
             type="text"
-            id="username"
-            name="username"
-            placeholder="아이디 입력"
-            value={form.username}
-            onChange={handleChange}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             required
           />
         </div>
-        <div className="input-group">
-          <label htmlFor="password">Password</label>
-          <input 
+        <div>
+          <label>비밀번호: </label>
+          <input
             type="password"
-            id="password"
-            name="password"
-            placeholder="비밀번호 입력"
-            value={form.password}
-            onChange={handleChange}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             required
           />
         </div>
-        <div className="input-group">
-          <label htmlFor="nickname">Nickname</label>
-          <input 
+        <div>
+          <label>닉네임: </label>
+          <input
             type="text"
-            id="nickname"
-            name="nickname"
-            placeholder="닉네임 입력"
-            value={form.nickname}
-            onChange={handleChange}
+            value={nickname}
+            onChange={(e) => setNickname(e.target.value)}
             required
           />
         </div>
-        <button type="submit" className="signupp-button" disabled={loading}>
-          {loading ? 'Signing Up...' : 'Sign Up'}
-        </button>
-        {error && <p className="error">Error: {error}</p>}
-        <div className="login-link">
-          <span>Already have an account?</span>
-          <Link to="/login">
-            <button type="button" className="login-button">Log In</button>
-          </Link>
-        </div>
+        <button type="submit">회원가입</button>
       </form>
+      {message && <p>{message}</p>}
     </div>
   );
 };

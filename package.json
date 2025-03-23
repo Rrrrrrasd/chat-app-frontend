@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@reduxjs/toolkit": "^2.5.1",
+    "@stomp/stompjs": "^7.1.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
@@ -15,6 +16,7 @@
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.3.0",
     "react-scripts": "5.0.1",
+    "sockjs-client": "^1.6.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
