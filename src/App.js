@@ -1,30 +1,31 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import Login from './components/Login';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
 import Home from './pages/Home';
-import Dashboard from './pages/Dashboard';
-import Signup from './components/Signup';
-import Logout from './components/Logout';
-import Chat from './components/chat';
+import ProfileEdit from './pages/ProfileEdit';
+import ChatRoom from './pages/ChatRoom';
+import Friends from './pages/Friends';
+import FriendRequests from './pages/FriendRequest';
+import AddFriend from './pages/AddFriend';
 
 function App() {
   return (
     <Router>
-      <nav>
+      <nav style={{ marginBottom: '20px' }}>
         <Link to="/">Home</Link> |{' '}
         <Link to="/login">Login</Link> |{' '}
-        <Link to="/signup">Signup</Link> |{' '}
-        <Link to="/dashboard">Dashboard</Link> |{' '}
-        <Link to="/logout">Logout</Link>
-        <Link to="/chat">chat</Link>
+        <Link to="/signup">Signup</Link>
       </nav>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/logout" element={<Logout />} />
-        <Route path="/chat" element={<Chat />} />
+        <Route path="/profile" element={<ProfileEdit />} />
+        <Route path="/chat/:roomId" element={<ChatRoom />} />
+        <Route path="/friends" element={<Friends />} />
+        <Route path="/friend-requests" element={<FriendRequests />} />
+        <Route path="/add-friend" element={<AddFriend />} />
       </Routes>
     </Router>
   );
